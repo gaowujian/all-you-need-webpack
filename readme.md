@@ -59,3 +59,5 @@
 12. loader 就是一个函数的方法，接受上一个 loader 的返回追作为参数，返回一个 string 或者 buffer
     1.  loader 可以是异步的
     2.  loader.pitch 和 loader 的执行顺序相反，显示 loader.pitch 然后是 loader 处理的文件内容，最后是 loader
+    3.  例如一个 style-loader 他的实际执行是 css 文件已经被当做了一个模块例如 ./style.css ，他的 id 就是 css 文件的路径，放在了 cachedModules 中，loader 的作用就是拿到了文件的内容然后，写一个 document.append(style)的操作，把这些 css 代码插入到内嵌啊的 html 中去
+    4.  loaders 可以连用，只有最左侧的 loader 需要返回 js，其他 loader 可以返回其他内容
