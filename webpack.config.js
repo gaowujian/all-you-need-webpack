@@ -18,6 +18,9 @@ module.exports = {
       },
     ],
   },
+  devServer: {
+    static: path.resolve(__dirname, "./public"),
+  },
   plugins: [
     //  prettier-ignore
     new HtmlWebpackPlugin({ template: "./src/index.html" }),
