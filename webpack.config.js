@@ -1,7 +1,17 @@
-module.export = {
-  src: "./src/index.js",
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require("path");
+
+module.exports = {
+  mode: "none",
+  entry: "./src/index.js",
   output: {
-    path: "./dist",
+    path: path.resolve(__dirname, "./dist"),
     filename: "bundle.js",
   },
+  plugins: [
+    //  prettier-ignore
+    new HtmlWebpackPlugin({ template: "./src/public/index.html" }),
+    // new CleanWebpackPlugin({ verbose: true }),
+  ],
 };

@@ -1,1 +1,0 @@
-(()=>{"use strict";console.log("content:","我是数据")})();
