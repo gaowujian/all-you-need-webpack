@@ -9,6 +9,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "./dist"),
     filename: "bundle.js",
+    publicPath: "xxx",
   },
   module: {
     rules: [
@@ -20,6 +21,8 @@ module.exports = {
   },
   devServer: {
     static: path.resolve(__dirname, "./public"),
+    port: 3000,
+    open: true,
   },
   plugins: [
     //  prettier-ignore
