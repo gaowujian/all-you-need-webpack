@@ -1,0 +1,15 @@
+{
+  "name": "all-you-need-webpack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "tony <806003097@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  },
+  "dependencies": {
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
+  }
+}
