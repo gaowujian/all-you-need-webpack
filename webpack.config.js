@@ -1,6 +1,9 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+
 const webpack = require("webpack");
+
 const path = require("path");
 
 module.exports = {
@@ -16,15 +19,10 @@ module.exports = {
     rules: [
       {
         test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-
-        loader: "my-babel-loader",
-        // options: {
-        //   presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
-        // },
-
+        // exclude: /node_modules/,
+        loader: "babel-loader",
         options: {
-          presets: ["@babel/preset-env"],
+          presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
         },
       },
       {
@@ -86,6 +84,14 @@ module.exports = {
     // new CleanWebpackPlugin({ verbose: true }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: "public/1.png",
+          to: path.resolve(__dirname, "dist"),
+        },
+      ],
     }),
   ],
   resolveLoader: {

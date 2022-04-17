@@ -4,18 +4,18 @@
 // console.log("process.env.NODE_ENV:", process.env.NODE_ENV);
 // console.log("process.env.NODE_ENV:", globalVariable);
 // const a = require("./2.png");
-const fn = () => {
-  console.log("you are the baest");
-};
-fn();
+// const fn = () => {
+//   console.log("you are the baest");
+// };
+// fn();
 // console.log("a:", a);
 // import("./extra.txt");
 // console.log("b:", b);
 
-// import Home from "./Home";
-// import React from "react";
-// import ReactDOM from "react-dom";
-// ReactDOM.render(<Home />, document.getElementById("root"));
+import Home from "./Home";
+import React from "react";
+import ReactDOM from "react-dom";
+ReactDOM.render(<Home />, document.getElementById("root"));
 
 // setTimeout(() => {
 //   const xhr = new XMLHttpRequest();
