@@ -10,8 +10,14 @@
    4. DefinePlugin 用来设置模块内的全局变量： --mode 已经提前占用了 process.env.NODE_ENV 这个变量，如果有其他的场景需要额外变量可以自行再设置
 5. webpack serve 需要安装额外的 webpack-dev-serve 包
    1. 在没有配置 devServe 的配置项的时候，会使用默认配置创建一个 express 服务器，所有渲染的内容都存储在内存中，而不是去 serve 一个本地的 dist 目录
-   2. 如果需要额外的静态文件挂载，这些文件的特性就是不需要 webpack 进行打包以及额外的分析，可以使用 static 属性 效果和 express.static()中间件同理，在 webpack5 之前使用的 contentBase 属性而不是 static 属性
-   3. 例如在开发阶段，我们的图片可以放在了 public 目录下，但是打包的时候，需要使用 copy-webpack-plugin 把 public 的文件，全部拷贝到 dist 打包目录下
+   2. devServer 配置项就可以看做一个 server.js 创建的 express 服务器
+      1. port 设置接口
+      2. proxy 可以配置代理
+      3. static 可以配置静态资源
+      4. onBeforeSetupMiddleware 函数可以获得 app 实例， 所以可以看做一个简单的路由配置项
+   3. 当没有配合 html-webpack-plugin 插件使用时，服务器内由于没有 index.html 所以默认不会渲染任何页面，只会显示这个服务器目录的静态资源，例如 public 目录下的资源，以及打包咋内存中的 bundle.js 文件 可以通过 http://localhost:3000/bundle.js
+   4. 如果需要额外的静态文件挂载，这些文件的特性就是不需要 webpack 进行打包以及额外的分析，可以使用 static 属性 效果和 express.static()中间件同理，在 webpack5 之前使用的 contentBase 属性而不是 static 属性
+   5. 例如在开发阶段，我们的图片可以放在了 public 目录下，但是打包的时候，需要使用 copy-webpack-plugin 把 public 的文件，全部拷贝到 dist 打包目录下
 6. 在我们使用 raw-loader, file-loader 以及 url-loader 时候
    1. 不管是使用 require 或者是 import 进行引入
    2. type: asset/source 类型的资源，webpack 进行 rawloader 操作,导出资源的源代码而不是，而不是想 url-loader 转为 dataurl，他的结果是不可读的乱码
@@ -32,9 +38,9 @@
    5. importLoaders 表示 css-loader 前有几个 loader，例如有 less 和 postcss 就需要设置为 2
    6. esModule 设置输出结果是否为 esModule，通常处理结果需要给 style-loader 或者提取出单独的 css，开启后 esModule 在一些场景下对 tree shaking 有用
 9. js 的兼容性
-   1. 处理高级 js 转低级 js 语法
-      1. babel-loader @babel/core @babel/preset-env
-   2. 处理 jsx 语法解析为正常的 js 语法
-      1. babel-loader @babel/core @babel/preset-env @babel/preset-react
-   3. 处理 tsx 语法解析为正常的 js 语法
-      1. babel-loader @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript
+   1. 处理高级 js 转低级 js 语法: babel-loader @babel/core @babel/preset-env
+   2. 处理 jsx 语法解析为正常的 js 语法 : babel-loader @babel/core @babel/preset-env @babel/preset-react
+   3. 处理 tsx 语法解析为正常的 js 语法 babel-loader @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript
+10. eslint 集成到 webpack 流程中
+    1. 如果不想要编辑时，进行 eslint 的修复，需要关闭 vscode eslint:fixall
+    2. 需要针对 js 等文件，添加一个新的 eslint-loader，这样在编译的过程中就会对代码进行一个代码修复

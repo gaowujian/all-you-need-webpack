@@ -53,6 +53,15 @@ module.exports = {
     static: path.resolve(__dirname, "./public"),
     port: 3000,
     open: true,
+    onBeforeSetupMiddleware: function ({ app }) {
+      app.get("/users", (req, res) => {
+        res.json({
+          name: "wujian",
+          age: 28,
+        });
+        // res.end("wujian");
+      });
+    },
   },
   resolve: {
     extensions: [".js", ".json", ".jsx", ".tsx"],

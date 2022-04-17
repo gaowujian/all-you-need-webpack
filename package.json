@@ -9,6 +9,7 @@
     "start": "cross-env NODE_ENV=development webpack serve"
   },
   "dependencies": {
+    "axios": "^0.26.1",
     "clean-webpack-plugin": "^4.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.7.1",
