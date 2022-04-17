@@ -9,13 +9,34 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "./dist"),
     filename: "bundle.js",
-    publicPath: "xxx",
+    publicPath: "/",
   },
   module: {
     rules: [
       {
         test: /.css$/,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.png$/,
+        type: "asset/resource",
+      },
+      {
+        test: /\.ico$/,
+        type: "asset/inline",
+      },
+      {
+        test: /\.txt$/,
+        type: "asset/source",
+      },
+      {
+        test: /\.jpg$/,
+        type: "asset",
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024, // 4kb
+          },
+        },
       },
     ],
   },

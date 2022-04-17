@@ -3,3 +3,7 @@ import "./style.css";
 console.log("content:", content);
 console.log("process.env.NODE_ENV:", process.env.NODE_ENV);
 console.log("process.env.NODE_ENV:", globalVariable);
+const a = require("./2.png");
+console.log("a:", a);
+const b = require("./extra.txt");
+console.log("b:", b);

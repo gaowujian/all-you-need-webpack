@@ -12,3 +12,16 @@
    1. 在没有配置 devServe 的配置项的时候，会使用默认配置创建一个 express 服务器，所有渲染的内容都存储在内存中，而不是去 serve 一个本地的 dist 目录
    2. 如果需要额外的静态文件挂载，这些文件的特性就是不需要 webpack 进行打包以及额外的分析，可以使用 static 属性 效果和 express.static()中间件同理，在 webpack5 之前使用的 contentBase 属性而不是 static 属性
    3. 例如在开发阶段，我们的图片可以放在了 public 目录下，但是打包的时候，需要使用 copy-webpack-plugin 把 public 的文件，全部拷贝到 dist 打包目录下
+6. 在我们使用 raw-loader, file-loader 以及 url-loader 时候
+   1. 不管是使用 require 或者是 import 进行引入
+   2. type: asset/source 类型的资源，webpack 进行 rawloader 操作,导出资源的源代码而不是，而不是想 url-loader 转为 dataurl，他的结果是不可读的乱码
+      1. 例如文本资源，适用于这种类型
+   3. type: asset/resource 类型的资源 == file-loader，webpack 会直接输出这个资源到打包的目录下，类似于 copy-plugin，同时返回一个 hash 的地址
+      1. 例如大图片资源，也是非可读的二进制资源
+   4. type: asset/inline 类型的资源 === url-loader, webpack 会返回一个资源进行 base64 编码后的字符串，也就是 dataurl 的结果
+      1. 例如小图片资源，非可读资源，可以减少 http 请求
+   5. type: asset 同时还可以设置条件，判断是导出文件内容返回地址，或者是直接返回 base64 的文件内容
+7. 对于图片类的静态资源
+   1. 有的时候需要进行动态加载，例如瀑布流，我们就需要对他们进行打包，设置对应的打包规则
+   2. 否则可以直接使用 copy-plugin 把文件资源拷贝到打包目录下，并部署
+8. 通过 css-loader 配置，开启 css-module 处理
