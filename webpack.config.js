@@ -16,11 +16,15 @@ module.exports = {
     rules: [
       {
         test: /\.[jt]sx?$/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
-          },
+        exclude: /node_modules/,
+
+        loader: "my-babel-loader",
+        // options: {
+        //   presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
+        // },
+
+        options: {
+          presets: ["@babel/preset-env"],
         },
       },
       {
@@ -37,7 +41,16 @@ module.exports = {
       },
       {
         test: /\.txt$/,
-        type: "asset/source",
+        // use: [
+        //   {
+        //     loader: "file-loader",
+        //     options: {
+        //       raw: false,
+        //     },
+        //   },
+        // ],
+
+        loader: path.resolve(__dirname, "loaders", "my-file-loader.js"),
       },
       {
         test: /\.jpg$/,
@@ -75,4 +88,10 @@ module.exports = {
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
   ],
+  resolveLoader: {
+    alias: {
+      "my-babel-loader": path.resolve(__dirname, "loaders/my-babel-loader.js"),
+    },
+    // modules: [path.resolve("./loader"), "node_modules"],
+  },
 };

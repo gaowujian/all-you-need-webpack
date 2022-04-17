@@ -60,4 +60,6 @@
     1.  loader 可以是异步的
     2.  loader.pitch 和 loader 的执行顺序相反，显示 loader.pitch 然后是 loader 处理的文件内容，最后是 loader
     3.  例如一个 style-loader 他的实际执行是 css 文件已经被当做了一个模块例如 ./style.css ，他的 id 就是 css 文件的路径，放在了 cachedModules 中，loader 的作用就是拿到了文件的内容然后，写一个 document.append(style)的操作，把这些 css 代码插入到内嵌啊的 html 中去
-    4.  loaders 可以连用，只有最左侧的 loader 需要返回 js，其他 loader 可以返回其他内容
+    4.  loaders 可以连用，只有最左侧的 loader 需要返回 js 字符串，会被当做合法的 js 代码放进一个函数中调用，其他 loader 可以返回其他内容
+        1.  例如我们可以写一个 my-file-loader 把 txt 的内容读取到后，插入到页面中，这是一个可行的 loader
+    5.  如果一个 rule 只需要一个 loader，那么可以使用 test, loader, options 作为一个对象，如果需要多个 loader，那么需要使用 test, use 数组， 数组中的每一项都是 loader,options

@@ -275,7 +275,9 @@
       },
       {
         "test": {},
-        "type": "asset/source"
+        "use": {
+          "loader": "C:\\Users\\admin\\Desktop\\all-you-need-webpack\\loaders\\my-file-loader.js"
+        }
       },
       {
         "test": {},
