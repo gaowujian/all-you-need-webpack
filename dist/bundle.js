@@ -26,7 +26,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \**********************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data */ \"./src/data.js\");\n\r\n// import \"./style.css\";\r\nconsole.log(\"content:\", _data__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\r\nconsole.log(\"process.env.NODE_ENV:\", \"development\");\r\nconsole.log(\"process.env.NODE_ENV:\", \"development\");\r\n\n\n//# sourceURL=webpack://all-you-need-webpack/./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./data */ \"./src/data.js\");\n\r\n// import \"./style.css\";\r\nconsole.log(\"content:\", _data__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\r\nconsole.log(\"process.env.NODE_ENV:\", \"development\");\r\nconsole.log(\"process.env.OTHER_ENV:\", \"development\");\r\n\n\n//# sourceURL=webpack://all-you-need-webpack/./src/index.js?");
 
 /***/ })
 
