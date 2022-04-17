@@ -14,25 +14,25 @@ import React from "react";
 import ReactDOM from "react-dom";
 ReactDOM.render(<Home />, document.getElementById("root"));
 
-setTimeout(() => {
-  const xhr = new XMLHttpRequest();
-  xhr.open("get", "/users");
-  //   xhr.responseType = "json";
-  xhr.onreadystatechange = function (e) {
-    if (e.target.readyState === 4) {
-      console.log("xhr.responseText:", xhr.responseText);
-      console.log("xhr.response:", xhr.response);
-    }
-  };
-  xhr.send();
-}, 1000);
+// setTimeout(() => {
+//   const xhr = new XMLHttpRequest();
+//   xhr.open("get", "/users");
+//   //   xhr.responseType = "json";
+//   xhr.onreadystatechange = function (e) {
+//     if (e.target.readyState === 4) {
+//       console.log("xhr.responseText:", xhr.responseText);
+//       console.log("xhr.response:", xhr.response);
+//     }
+//   };
+//   xhr.send();
+// }, 1000);
 
-setTimeout(() => {
-  const axios = window.axios;
-  axios
-    .get("/users")
-    .then((res) => res.data)
-    .then((data) => {
-      console.log("data:", data);
-    });
-}, 1000);
+// setTimeout(() => {
+//   const axios = window.axios;
+//   axios
+//     .get("/users")
+//     .then((res) => res.data)
+//     .then((data) => {
+//       console.log("data:", data);
+//     });
+// }, 1000);
