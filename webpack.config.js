@@ -14,6 +14,15 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.[jt]sx?$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
+          },
+        },
+      },
+      {
         test: /.css$/,
         use: ["style-loader", "css-loader"],
       },
@@ -44,6 +53,9 @@ module.exports = {
     static: path.resolve(__dirname, "./public"),
     port: 3000,
     open: true,
+  },
+  resolve: {
+    extensions: [".js", ".json", ".jsx", ".tsx"],
   },
   plugins: [
     //  prettier-ignore

@@ -24,4 +24,17 @@
 7. 对于图片类的静态资源
    1. 有的时候需要进行动态加载，例如瀑布流，我们就需要对他们进行打包，设置对应的打包规则
    2. 否则可以直接使用 copy-plugin 把文件资源拷贝到打包目录下，并部署
-8. 通过 css-loader 配置，开启 css-module 处理
+8. 了解 css-loader 配置项 https://github.com/webpack-contrib/css-loader
+   1. url 是否支持 css 中使用 url
+   2. import 是否支持 import 语法
+   3. modules 是否开启 css module 支持
+   4. sourceMap 是否开启 sourceMap
+   5. importLoaders 表示 css-loader 前有几个 loader，例如有 less 和 postcss 就需要设置为 2
+   6. esModule 设置输出结果是否为 esModule，通常处理结果需要给 style-loader 或者提取出单独的 css，开启后 esModule 在一些场景下对 tree shaking 有用
+9. js 的兼容性
+   1. 处理高级 js 转低级 js 语法
+      1. babel-loader @babel/core @babel/preset-env
+   2. 处理 jsx 语法解析为正常的 js 语法
+      1. babel-loader @babel/core @babel/preset-env @babel/preset-react
+   3. 处理 tsx 语法解析为正常的 js 语法
+      1. babel-loader @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript
