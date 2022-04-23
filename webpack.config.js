@@ -22,7 +22,7 @@ module.exports = {
         // exclude: /node_modules/,
         loader: "babel-loader",
         options: {
-          presets: ["@babel/preset-react", "@babel/preset-typescript", "@babel/preset-env"],
+          presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
         },
       },
       {
@@ -39,16 +39,15 @@ module.exports = {
       },
       {
         test: /\.txt$/,
-        // use: [
-        //   {
-        //     loader: "file-loader",
-        //     options: {
-        //       raw: false,
-        //     },
+        type: "asset/source",
+        // use: {
+        //   loader: "file-loader",
+        //   options: {
+        //     raw: false,
         //   },
-        // ],
+        // },
 
-        loader: path.resolve(__dirname, "loaders", "my-file-loader.js"),
+        // loader: path.resolve(__dirname, "loaders", "my-file-loader.js"),
       },
       {
         test: /\.jpg$/,
@@ -65,6 +64,7 @@ module.exports = {
     static: path.resolve(__dirname, "./public"),
     port: 3000,
     open: true,
+    hot: true,
     onBeforeSetupMiddleware: function ({ app }) {
       app.get("/users", (req, res) => {
         res.json({
@@ -85,14 +85,15 @@ module.exports = {
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: "public/1.png",
-          to: path.resolve(__dirname, "dist"),
-        },
-      ],
-    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {
+    //       from: "public/1.png",
+    //       to: path.resolve(__dirname, "dist"),
+    //     },
+    //   ],
+    // }),
+    // new webpack.HotModuleReplacementPlugin(),
   ],
   resolveLoader: {
     alias: {
