@@ -1,7 +1,12 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+// 提取css文件
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+//v4压缩css文件
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+//v5压缩css文件
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const webpack = require("webpack");
 const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -14,6 +19,7 @@ const paths = {
   srcPath: resolvePath("src"),
   distPath: resolvePath("dist"),
   publicPath: resolvePath("public"),
+  template: resolvePath("src/template.html"),
 };
 module.exports = {
   context: paths.rootPath,
@@ -41,7 +47,26 @@ module.exports = {
         },
       },
       {
-        test: /\.(css|less)$/,
+        test: /\.css$/,
+        use: [
+          isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              url: true,
+              import: true,
+              modules: false,
+              sourceMap: true,
+              importLoaders: 1,
+              esModule: true,
+            },
+          },
+          "postcss-loader",
+        ],
+      },
+
+      {
+        test: /\.less$/,
         use: [
           isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
           {
@@ -102,14 +127,14 @@ module.exports = {
     port: 3000,
     open: true,
     hot: true,
-    onBeforeSetupMiddleware: function ({ app }) {
-      app.get("/users", (req, res) => {
-        res.json({
-          name: "wujian",
-          age: 28,
-        });
-      });
-    },
+    // onBeforeSetupMiddleware: function ({ app }) {
+    //   app.get("/users", (req, res) => {
+    //     res.json({
+    //       name: "wujian",
+    //       age: 28,
+    //     });
+    //   });
+    // },
   },
   resolve: {
     extensions: [".js", ".json", ".js", ".ts", ".jsx", ".tsx"],
@@ -119,7 +144,7 @@ module.exports = {
     },
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: "./src/template.html", minify: isDevelopment ? false : true }),
+    new HtmlWebpackPlugin({ template: paths.template, minify: isDevelopment ? false : true }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
@@ -128,11 +153,12 @@ module.exports = {
         filename: "[name].[chunkhash:6].css",
         chunkFilename: "[id].css",
       }),
-    !isDevelopment &&
-      new CopyWebpackPlugin({
-        from: resolve(),
-      }),
+    // !isDevelopment &&
+    //   new CopyWebpackPlugin({
+    //     from: resolve(),
+    //   }),
     new CleanWebpackPlugin(),
+    new CssMinimizerPlugin(),
   ].filter(Boolean),
   resolveLoader: {
     alias: {
