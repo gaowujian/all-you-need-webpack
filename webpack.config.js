@@ -3,23 +3,34 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
-const path = require("path");
+const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
+
+function resolvePath(...args) {
+  return resolve(__dirname, ...args);
+}
+const paths = {
+  rootPath: resolvePath("."),
+  srcPath: resolvePath("src"),
+  distPath: resolvePath("dist"),
+  publicPath: resolvePath("public"),
+};
 module.exports = {
+  context: paths.rootPath,
   mode: isDevelopment ? "development" : "production",
   devtool: false,
   entry: {
-    master: "./src/index.js",
+    main: "./src/index.tsx",
   },
   output: {
-    path: path.resolve(__dirname, "./dist"),
+    path: paths.distPath,
     filename: "[name].[hash:6].bundle.js",
     publicPath: "/",
   },
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
         options: {
@@ -30,7 +41,7 @@ module.exports = {
         },
       },
       {
-        test: /.(c|le)ss$/,
+        test: /\.(css|less)$/,
         use: [
           isDevelopment ? "style-loader" : MiniCssExtractPlugin.loader,
           {
@@ -49,7 +60,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.png$/,
+        test: /\.(png|jpe?g)$/,
         type: "asset/resource",
       },
       {
@@ -60,22 +71,13 @@ module.exports = {
         test: /\.txt$/,
         type: "asset/source",
       },
-      {
-        test: /\.jpg$/,
-        type: "asset",
-        parser: {
-          dataUrlCondition: {
-            maxSize: 4 * 1024,
-          },
-        },
-      },
-    ],
+    ].filter(Boolean),
   },
   optimization: {
     minimize: false,
     splitChunks: {
       chunks: "all",
-      minSize: 2000,
+      minSize: 200000,
       minRemainingSize: 0,
       minChunks: 1,
       maxAsyncRequests: 30,
@@ -96,7 +98,7 @@ module.exports = {
     },
   },
   devServer: {
-    static: path.resolve(__dirname, "./public"),
+    static: paths.publicPath,
     port: 3000,
     open: true,
     hot: true,
@@ -110,10 +112,14 @@ module.exports = {
     },
   },
   resolve: {
-    extensions: [".js", ".json", ".jsx", ".tsx"],
+    extensions: [".js", ".json", ".js", ".ts", ".jsx", ".tsx"],
+    modules: ["node_modules"],
+    alias: {
+      "@": resolvePath("src"),
+    },
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: "./src/index.html", minify: false }),
+    new HtmlWebpackPlugin({ template: "./src/template.html", minify: isDevelopment ? false : true }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
@@ -122,11 +128,18 @@ module.exports = {
         filename: "[name].[chunkhash:6].css",
         chunkFilename: "[id].css",
       }),
+    !isDevelopment &&
+      new CopyWebpackPlugin({
+        from: resolve(),
+      }),
     new CleanWebpackPlugin(),
-  ],
+  ].filter(Boolean),
   resolveLoader: {
     alias: {
-      "my-babel-loader": path.resolve(__dirname, "loaders/my-babel-loader.js"),
+      "my-file-loader": resolve(__dirname, "loaders/my-file-loader.js"),
     },
+  },
+  externals: {
+    jquery: "jQuery",
   },
 };
