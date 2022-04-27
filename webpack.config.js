@@ -147,7 +147,7 @@ module.exports = {
     static: paths.publicPath,
     port: 3000,
     open: false,
-    hot: true,
+    hot: true, //  webpack-dev-server会自动在plugins中插入new webpack.HotModuleReplacementPlugin(),
     // onBeforeSetupMiddleware: function ({ app }) {
     //   app.get("/users", (req, res) => {
     //     res.json({
@@ -188,7 +188,7 @@ module.exports = {
     new InterpolateHtmlPlugin({
       NODE_ENV: NODE_ENV,
     }),
-    new BundleAnalyzerPlugin(), // 使用默认配置
+    // new BundleAnalyzerPlugin(), // 使用默认配置
     // new GetModulesPlugin(), // 自定义插件打印 modules信息
   ].filter(Boolean),
   resolveLoader: {
