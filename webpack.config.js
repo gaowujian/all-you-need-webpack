@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //v5压缩css文件
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+//
 const webpack = require("webpack");
 const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -153,10 +154,15 @@ module.exports = {
         filename: "[name].[chunkhash:6].css",
         chunkFilename: "[id].css",
       }),
-    // !isDevelopment &&
-    //   new CopyWebpackPlugin({
-    //     from: resolve(),
-    //   }),
+    !isDevelopment &&
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            // 默认不设置to就会打包到输出目录下
+            from: "public",
+          },
+        ],
+      }),
     new CleanWebpackPlugin(),
     new CssMinimizerPlugin(),
   ].filter(Boolean),
