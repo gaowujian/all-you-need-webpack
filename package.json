@@ -40,6 +40,8 @@
     "interpolate-html-plugin": "^4.0.0",
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
+    "speed-measure-webpack-plugin": "^1.5.0",
+    "webpack-bundle-analyzer": "^4.5.0",
     "webpack-dev-server": "^4.8.1"
   },
   "browserslist": {

@@ -1,14 +1,20 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+// v5之后使用 output.clean属性内置
+// const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 // 提取css文件
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 //v4压缩css文件
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+// const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //v5压缩css文件
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 // 给html插入变量
 const InterpolateHtmlPlugin = require("interpolate-html-plugin");
+// 分析打包结果
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+//  测速插件
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const GetModulesPlugin = require("./plugins/get-modules-plugin");
 const webpack = require("webpack");
 const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -24,18 +30,26 @@ const paths = {
   publicPath: resolvePath("public"),
   template: resolvePath("src/template.html"),
 };
+// const smp = new SpeedMeasurePlugin();
+// module.exports = smp.wrap(webpackConfig)
 module.exports = {
   context: paths.rootPath,
   mode: isDevelopment ? "development" : "production",
-  devtool: false,
+  devtool: isDevelopment ? "eval-cheap-module-source-map" : "eval-cheap-module-source-map",
   entry: {
     main: "./src/index.tsx",
   },
+
   output: {
     path: paths.distPath,
-    filename: "[name].[hash:6].bundle.js",
-    // 开发环境使用/, 生产环境需要使用服务器的域名 例如 www.3w6d.com
-    publicPath: "/",
+    // 用于给非初始化chunk的名字
+    // chunkFilename: "",
+    // 每个entry对应了一个chunk设置名字
+    filename: "[name].[chunkhash:6].bundle.js",
+    // 开发环境使用 ""，表示资源查找相对于html文件位置, 生产环境需要使用服务器的域名 例如 www.3w6d.com
+    // 用来给html插入资源前加前缀
+    publicPath: "",
+    clean: true,
   },
   module: {
     rules: [
@@ -103,29 +117,28 @@ module.exports = {
     ].filter(Boolean),
   },
   optimization: {
-    minimize: false,
     splitChunks: {
-      chunks: "all",
-      minSize: 30000,
-      minRemainingSize: 0,
-      minChunks: 1,
-      maxAsyncRequests: 5,
-      maxInitialRequests: 3,
-      enforceSizeThreshold: 50000,
-      name: true,
-      automaticNameDelimiter: "~",
+      chunks: "all", //配置所有chunk都要切分，包括入口的main chunk，除了两条分组规则，其他采用默认值
+      // minSize: 20000, //只有超过30B，才会触发分块的逻辑
+      // minRemainingSize: 0,
+      // minChunks: 1,
+      // maxAsyncRequests: 5,
+      // maxInitialRequests: 3, //
+      // enforceSizeThreshold: 50000,
       cacheGroups: {
         vendors: {
-          chunks: "all",
+          name: "vendors",
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
           reuseExistingChunk: true,
+          filename: "[name]~bundle.js",
         },
-        common: {
-          chunks: "all",
-          minChunks: 2,
+        commons: {
+          name: "commons",
+          minChunks: 2, // 至少有两个chunk里引用了同一个module才有必要拆分, 多页应用，或者import()异步加载
           priority: -20,
           reuseExistingChunk: true,
+          filename: "[name]~bundle.js",
         },
       },
     },
@@ -158,7 +171,7 @@ module.exports = {
     }),
     !isDevelopment &&
       new MiniCssExtractPlugin({
-        filename: "[name].[chunkhash:6].css",
+        filename: "[name].[contenthash:6].css",
         chunkFilename: "[id].css",
       }),
     !isDevelopment &&
@@ -170,24 +183,27 @@ module.exports = {
           },
         ],
       }),
-    new CleanWebpackPlugin(),
     new CssMinimizerPlugin(),
     new webpack.ProgressPlugin(),
     new InterpolateHtmlPlugin({
       NODE_ENV: NODE_ENV,
     }),
+    new BundleAnalyzerPlugin(), // 使用默认配置
+    // new GetModulesPlugin(), // 自定义插件打印 modules信息
   ].filter(Boolean),
   resolveLoader: {
     alias: {
       "my-file-loader": resolve(__dirname, "loaders/my-file-loader.js"),
     },
   },
+  // 打包的输出信息 normal | verbose | minimal
+  stats: "normal",
   //  react对应src代码中的from后字段，React表示在浏览器下umd打包挂载全局的是React,在src的代码不一定使用React
-  externals: !isDevelopment
-    ? {
-        react: "React",
-        "react-dom": "ReactDOM",
-        lodash: "_",
-      }
-    : "false",
+  // externals: !isDevelopment
+  //   ? {
+  //       react: "React",
+  //       "react-dom": "ReactDOM",
+  //       lodash: "_",
+  //     }
+  //   : "false",
 };
