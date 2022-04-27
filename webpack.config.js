@@ -7,10 +7,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 //v5压缩css文件
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-//
+// 给html插入变量
+const InterpolateHtmlPlugin = require("interpolate-html-plugin");
 const webpack = require("webpack");
 const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
+const NODE_ENV = isDevelopment ? "development" : "production";
 
 function resolvePath(...args) {
   return resolve(__dirname, ...args);
@@ -102,8 +104,8 @@ module.exports = {
   optimization: {
     minimize: false,
     splitChunks: {
-      chunks: "all",
-      minSize: 200000,
+      chunks: "async",
+      minSize: 20000,
       minRemainingSize: 0,
       minChunks: 1,
       maxAsyncRequests: 30,
@@ -126,7 +128,7 @@ module.exports = {
   devServer: {
     static: paths.publicPath,
     port: 3000,
-    open: true,
+    open: false,
     hot: true,
     // onBeforeSetupMiddleware: function ({ app }) {
     //   app.get("/users", (req, res) => {
@@ -145,7 +147,7 @@ module.exports = {
     },
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: paths.template, minify: isDevelopment ? false : true }),
+    new HtmlWebpackPlugin({ template: paths.template, minify: isDevelopment ? false : true, scriptLoading: "defer" }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
@@ -165,13 +167,22 @@ module.exports = {
       }),
     new CleanWebpackPlugin(),
     new CssMinimizerPlugin(),
+    new webpack.ProgressPlugin(),
+    new InterpolateHtmlPlugin({
+      NODE_ENV: NODE_ENV,
+    }),
   ].filter(Boolean),
   resolveLoader: {
     alias: {
       "my-file-loader": resolve(__dirname, "loaders/my-file-loader.js"),
     },
   },
-  externals: {
-    jquery: "jQuery",
-  },
+  //  react对应src代码中的from后字段，React表示在浏览器下umd打包挂载全局的是React,在src的代码不一定使用React
+  externals: !isDevelopment
+    ? {
+        react: "React",
+        "react-dom": "ReactDOM",
+        lodash: "_",
+      }
+    : "false",
 };

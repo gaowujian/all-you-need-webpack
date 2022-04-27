@@ -1,6 +1,6 @@
 import React from "react";
-import axios from "axios";
-console.log("axios:", axios);
+// import axios from "axios";
+// console.log("axios:", axios);
 // @ts-ignore
 import txtContent from "./assets/extra.txt";
 
