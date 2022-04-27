@@ -34,6 +34,7 @@ module.exports = {
   output: {
     path: paths.distPath,
     filename: "[name].[hash:6].bundle.js",
+    // 开发环境使用/, 生产环境需要使用服务器的域名 例如 www.3w6d.com
     publicPath: "/",
   },
   module: {
@@ -104,20 +105,24 @@ module.exports = {
   optimization: {
     minimize: false,
     splitChunks: {
-      chunks: "async",
-      minSize: 20000,
+      chunks: "all",
+      minSize: 30000,
       minRemainingSize: 0,
       minChunks: 1,
-      maxAsyncRequests: 30,
-      maxInitialRequests: 30,
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
       enforceSizeThreshold: 50000,
+      name: true,
+      automaticNameDelimiter: "~",
       cacheGroups: {
-        defaultVendors: {
+        vendors: {
+          chunks: "all",
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
           reuseExistingChunk: true,
         },
-        default: {
+        common: {
+          chunks: "all",
           minChunks: 2,
           priority: -20,
           reuseExistingChunk: true,
