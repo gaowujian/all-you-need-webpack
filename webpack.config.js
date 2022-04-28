@@ -147,7 +147,20 @@ module.exports = {
     },
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: paths.template, minify: isDevelopment ? false : true, scriptLoading: "defer" }),
+    new HtmlWebpackPlugin({
+      template: paths.template,
+      minify: isDevelopment ? false : true,
+      scriptLoading: "defer",
+      cdn: {
+        css: ["https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"],
+        js: !isDevelopment
+          ? [
+              "https://cdn.bootcdn.net/ajax/libs/react/18.1.0-next-726ba8029-20220415/umd/react.production.min.js",
+              "https://cdn.bootcdn.net/ajax/libs/react-dom/18.1.0-next-726ba8029-20220415/umd/react-dom.production.min.js",
+            ]
+          : [],
+      },
+    }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
     }),
@@ -168,9 +181,9 @@ module.exports = {
     new CleanWebpackPlugin(),
     new CssMinimizerPlugin(),
     new webpack.ProgressPlugin(),
-    new InterpolateHtmlPlugin({
-      NODE_ENV: NODE_ENV,
-    }),
+    // new InterpolateHtmlPlugin({
+    //   NODE_ENV: NODE_ENV,
+    // }),
   ].filter(Boolean),
   resolveLoader: {
     alias: {
