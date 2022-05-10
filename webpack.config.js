@@ -14,6 +14,8 @@ const InterpolateHtmlPlugin = require("interpolate-html-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 //  测速插件
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+// gzip压缩插件
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const GetModulesPlugin = require("./plugins/get-modules-plugin");
 const webpack = require("webpack");
 const { resolve } = require("path");
@@ -55,14 +57,24 @@ module.exports = {
     rules: [
       {
         test: /\.(js|jsx|ts|tsx)$/,
-        loader: "babel-loader",
         exclude: /node_modules/,
-        options: {
-          presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
-          cacheDirectory: true,
-          cacheCompression: false,
-          compact: false,
-        },
+        use: [
+          {
+            loader: "thread-loader",
+            options: {
+              workers: 3,
+            },
+          },
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
+              cacheDirectory: true,
+              cacheCompression: false,
+              compact: false,
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -198,6 +210,14 @@ module.exports = {
       }),
     new CssMinimizerPlugin(),
     new webpack.ProgressPlugin(),
+    // 开启Gzip压缩，同时nginx配饰 gzip_static会优先返回gz的资源，减少服务器压力
+    // new CompressionWebpackPlugin({
+    //   test: /\.(js|css)(\?.*)?$/i,
+    //   threshold: 1024 * 30, // 30K
+    //   minRatio: 0.8,
+    //   exclude: /node_modules/,
+    // }),
+
     // new InterpolateHtmlPlugin({
     //   NODE_ENV: NODE_ENV,
     // }),
@@ -212,11 +232,11 @@ module.exports = {
   // 打包的输出信息 normal | verbose | minimal
   stats: "normal",
   //  react对应src代码中的from后字段，React表示在浏览器下umd打包挂载全局的是React,在src的代码不一定使用React
-  // externals: !isDevelopment
-  //   ? {
-  //       react: "React",
-  //       "react-dom": "ReactDOM",
-  //       lodash: "_",
-  //     }
-  //   : "false",
+  externals: !isDevelopment
+    ? {
+        react: "React",
+        "react-dom": "ReactDOM",
+        lodash: "_",
+      }
+    : {},
 };
