@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 // @ts-ignore
-import txtContent from "./assets/extra.txt";
+// import txtContent from "./assets/extra.txt";
 
 function home() {
   const name: string = "gaowujian";
@@ -19,7 +19,7 @@ function home() {
       />
 
       <img className="profile" src="profile.jpg" alt="头像" />
-      <p>{txtContent}</p>
+      {/* <p>{txtContent}</p> */}
     </div>
   );
 }

@@ -16,7 +16,8 @@ const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 // gzip压缩插件
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
-const GetModulesPlugin = require("./plugins/get-modules-plugin");
+// 自定义自动添加外链插件
+const AutoExternalPlugin = require("./plugins/auto-external-plugin");
 const webpack = require("webpack");
 const { resolve } = require("path");
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -129,31 +130,31 @@ module.exports = {
     ].filter(Boolean),
   },
   optimization: {
-    splitChunks: {
-      chunks: "all", //配置所有chunk都要切分，包括入口的main chunk，除了两条分组规则，其他采用默认值
-      // minSize: 20000, //只有超过30B，才会触发分块的逻辑
-      // minRemainingSize: 0,
-      // minChunks: 1,
-      // maxAsyncRequests: 5,
-      // maxInitialRequests: 3, //
-      // enforceSizeThreshold: 50000,
-      cacheGroups: {
-        vendors: {
-          name: "vendors",
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10,
-          reuseExistingChunk: true,
-          filename: "[name]~bundle.js",
-        },
-        commons: {
-          name: "commons",
-          minChunks: 2, // 至少有两个chunk里引用了同一个module才有必要拆分, 多页应用，或者import()异步加载
-          priority: -20,
-          reuseExistingChunk: true,
-          filename: "[name]~bundle.js",
-        },
-      },
-    },
+    // splitChunks: {
+    //   chunks: "all", //配置所有chunk都要切分，包括入口的main chunk，除了两条分组规则，其他采用默认值
+    //   // minSize: 20000, //只有超过30B，才会触发分块的逻辑
+    //   // minRemainingSize: 0,
+    //   // minChunks: 1,
+    //   // maxAsyncRequests: 5,
+    //   // maxInitialRequests: 3, //
+    //   // enforceSizeThreshold: 50000,
+    //   cacheGroups: {
+    //     vendors: {
+    //       name: "vendors",
+    //       test: /[\\/]node_modules[\\/]/,
+    //       priority: -10,
+    //       reuseExistingChunk: true,
+    //       filename: "[name]~bundle.js",
+    //     },
+    //     commons: {
+    //       name: "commons",
+    //       minChunks: 2, // 至少有两个chunk里引用了同一个module才有必要拆分, 多页应用，或者import()异步加载
+    //       priority: -20,
+    //       reuseExistingChunk: true,
+    //       filename: "[name]~bundle.js",
+    //     },
+    //   },
+    // },
   },
   devServer: {
     static: paths.publicPath,
@@ -179,17 +180,18 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: paths.template,
-      minify: isDevelopment ? false : true,
-      scriptLoading: "defer",
-      cdn: {
-        css: ["https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"],
-        js: !isDevelopment
-          ? [
-              "https://cdn.bootcdn.net/ajax/libs/react/18.1.0-next-726ba8029-20220415/umd/react.production.min.js",
-              "https://cdn.bootcdn.net/ajax/libs/react-dom/18.1.0-next-726ba8029-20220415/umd/react-dom.production.min.js",
-            ]
-          : [],
-      },
+      // minify: isDevelopment ? false : true,
+      scriptLoading: "module",
+      inject: "body",
+      // cdn: {
+      //   css: ["https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"],
+      //   js: !isDevelopment
+      //     ? [
+      //         "https://cdn.bootcdn.net/ajax/libs/react/18.1.0-next-726ba8029-20220415/umd/react.production.min.js",
+      //         "https://cdn.bootcdn.net/ajax/libs/react-dom/18.1.0-next-726ba8029-20220415/umd/react-dom.production.min.js",
+      //       ]
+      //     : [],
+      // },
     }),
     new webpack.DefinePlugin({
       globalVariable: JSON.stringify(process.env.NODE_ENV),
@@ -222,7 +224,20 @@ module.exports = {
     //   NODE_ENV: NODE_ENV,
     // }),
     // new BundleAnalyzerPlugin(), // 使用默认配置
-    // new GetModulesPlugin(), // 自定义插件打印 modules信息
+    new AutoExternalPlugin({
+      react: {
+        variable: "React",
+        url: "https://cdn.bootcdn.net/ajax/libs/react/18.1.0-next-726ba8029-20220415/umd/react.production.min.js",
+      },
+      "react-dom": {
+        variable: "ReactDOM",
+        url: "https://cdn.bootcdn.net/ajax/libs/react-dom/18.1.0-next-726ba8029-20220415/umd/react-dom.production.min.js",
+      },
+      lodash: {
+        variable: "_",
+        url: "https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js",
+      },
+    }),
   ].filter(Boolean),
   resolveLoader: {
     alias: {
@@ -232,11 +247,11 @@ module.exports = {
   // 打包的输出信息 normal | verbose | minimal
   stats: "normal",
   //  react对应src代码中的from后字段，React表示在浏览器下umd打包挂载全局的是React,在src的代码不一定使用React
-  externals: !isDevelopment
-    ? {
-        react: "React",
-        "react-dom": "ReactDOM",
-        lodash: "_",
-      }
-    : {},
+  // externals: !isDevelopment
+  //   ? {
+  //       react: "React",
+  //       "react-dom": "ReactDOM",
+  //       lodash: "_",
+  //     }
+  //   : {},
 };
